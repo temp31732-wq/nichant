@@ -180,6 +180,7 @@ interface ResultsDisplayProps {
   results: CalculationResult | null;
   calculatorType: string;
   loading: boolean;
+  currency?: string;
 }
 
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, calculatorType, loading }) => {
