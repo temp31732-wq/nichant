@@ -1,4 +1,4 @@
-// Utility functions for formatting numbers and text to prevent overflow
+// Utility functions for formatting numbers and text
 
 export const formatCurrency = (amount: number, compact: boolean = false): string => {
   if (compact && amount >= 100000) {
@@ -21,12 +21,6 @@ export const formatPercentage = (value: number, decimals: number = 1): string =>
 
 export const truncateText = (text: string, maxLength: number): string => {
   return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
-};
-
-export const getDynamicFontSize = (amount: number): string => {
-  if (amount >= 10000000) return 'text-xl'; // 1 Crore+
-  if (amount >= 1000000) return 'text-2xl';  // 10 Lakh+
-  return 'text-3xl'; // Default
 };
 
 export const getCompactAmount = (amount: number): { value: string; unit: string } => {

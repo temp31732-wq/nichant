@@ -1,73 +1,127 @@
-# Welcome to your Lovable project
+# Smart Investment Calculator - React Native
 
-## Project info
+A comprehensive investment calculator mobile app built with Expo and React Native. Calculate returns for Fixed Deposits (FD), Recurring Deposits (RD), and Systematic Investment Plans (SIP).
 
-**URL**: https://lovable.dev/projects/7f2dab7d-19dd-43d5-bd29-af74ea85c87c
+## Features
 
-## How can I edit this code?
+- **Fixed Deposit Calculator**: Calculate returns with simple or compound interest
+- **Recurring Deposit Calculator**: Plan your monthly savings with RD calculations
+- **SIP Calculator**: Systematic Investment Plan calculator for mutual funds
+- **Responsive Design**: Optimized for mobile devices
+- **Real-time Calculations**: Instant results as you input values
+- **Detailed Results**: Comprehensive breakdown of investment returns
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Expo SDK 53**: React Native framework
+- **TypeScript**: Type-safe development
+- **Lucide React Native**: Beautiful icons
+- **React Native Reanimated**: Smooth animations
+- **Expo Router**: File-based routing
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7f2dab7d-19dd-43d5-bd29-af74ea85c87c) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js (v18 or later)
+- Expo CLI
+- iOS Simulator or Android Emulator (optional)
+- Expo Go app on your mobile device
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd smart-investment-calculator-mobile
 ```
 
-**Edit a file directly in GitHub**
+2. Install dependencies:
+```bash
+npm install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. Start the development server:
+```bash
+npm start
+```
 
-**Use GitHub Codespaces**
+4. Run on specific platforms:
+```bash
+# iOS
+npm run ios
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Android
+npm run android
 
-## What technologies are used for this project?
+# Web
+npm run web
+```
 
-This project is built with:
+## Project Structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```
+├── app/                    # Expo Router pages
+│   ├── _layout.tsx        # Root layout
+│   └── index.tsx          # Home screen
+├── src/
+│   ├── components/        # React components
+│   │   ├── Calculator.tsx # Main calculator component
+│   │   └── ResultsDisplay.tsx # Results display component
+│   └── utils/            # Utility functions
+│       └── formatters.ts # Number formatting utilities
+├── assets/               # Static assets
+└── app.json             # Expo configuration
+```
 
-## How can I deploy this project?
+## Features Overview
 
-Simply open [Lovable](https://lovable.dev/projects/7f2dab7d-19dd-43d5-bd29-af74ea85c87c) and click on Share -> Publish.
+### Fixed Deposit Calculator
+- Principal amount input
+- Interest rate configuration
+- Tenure selection
+- Simple vs Compound interest options
+- Compounding frequency selection
 
-## Can I connect a custom domain to my Lovable project?
+### Recurring Deposit Calculator
+- Monthly deposit amount
+- Interest rate input
+- Tenure in months
+- Automatic maturity calculation
 
-Yes, you can!
+### SIP Calculator
+- Monthly investment amount
+- Expected annual return
+- Investment period
+- Future value calculations
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Calculations
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+The app implements standard financial formulas:
+
+- **Simple Interest**: `SI = P × R × T / 100`
+- **Compound Interest**: `CI = P(1 + R/n)^(nt) - P`
+- **RD Maturity**: `M = P × [((1 + r)^n - 1) / (1 - (1 + r)^(-1/3))]`
+- **SIP Future Value**: `FV = P × ((1 + r)^n – 1) / r × (1 + r)`
+
+Where:
+- P = Principal/Monthly Investment
+- R/r = Interest Rate
+- T/t = Time Period
+- n = Compounding Frequency
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support, email support@smartcalculator.com or create an issue in the repository.
