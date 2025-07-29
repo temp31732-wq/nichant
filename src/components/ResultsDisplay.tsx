@@ -4,22 +4,177 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts';
 import { Download, TrendingUp, DollarSign, Percent, FileText } from 'lucide-react';
 import { CalculationResult } from './Calculator';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+
+// Simple Chart Components (Recharts Alternative)
+interface SimpleLineChartProps {
+  data: Array<{
+    month: number;
+    invested: number;
+    maturity: number;
+    interest: number;
+  }>;
+}
+
+const SimpleLineChart: React.FC<SimpleLineChartProps> = ({ data }) => {
+  if (!data.length) return null;
+
+  const maxValue = Math.max(...data.map(d => Math.max(d.invested, d.maturity)));
+  const width = 400;
+  const height = 200;
+  const padding = 40;
+
+  const xScale = (index: number) => (index / (data.length - 1)) * (width - 2 * padding) + padding;
+  const yScale = (value: number) => height - padding - ((value / maxValue) * (height - 2 * padding));
+
+  const investedPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i)} ${yScale(d.invested)}`).join(' ');
+  const maturityPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i)} ${yScale(d.maturity)}`).join(' ');
+
+  return (
+    <div className="w-full bg-card rounded-lg border p-4">
+      <svg width={width} height={height} className="w-full h-auto">
+        {/* Grid lines */}
+        {[0, 0.25, 0.5, 0.75, 1].map(ratio => (
+          <g key={ratio}>
+            <line
+              x1={padding}
+              y1={height - padding - (ratio * (height - 2 * padding))}
+              x2={width - padding}
+              y2={height - padding - (ratio * (height - 2 * padding))}
+              stroke="hsl(var(--border))"
+              strokeDasharray="2,2"
+              opacity={0.3}
+            />
+            <text
+              x={padding - 10}
+              y={height - padding - (ratio * (height - 2 * padding)) + 4}
+              fill="hsl(var(--muted-foreground))"
+              fontSize="10"
+              textAnchor="end"
+            >
+              ₹{((maxValue * ratio) / 1000).toFixed(0)}K
+            </text>
+          </g>
+        ))}
+        
+        {/* Invested line */}
+        <path
+          d={investedPath}
+          fill="none"
+          stroke="#3b82f6"
+          strokeWidth="2"
+        />
+        
+        {/* Maturity line */}
+        <path
+          d={maturityPath}
+          fill="none"
+          stroke="#10b981"
+          strokeWidth="2"
+        />
+        
+        {/* Data points */}
+        {data.map((d, i) => (
+          <g key={i}>
+            <circle
+              cx={xScale(i)}
+              cy={yScale(d.invested)}
+              r="3"
+              fill="#3b82f6"
+            />
+            <circle
+              cx={xScale(i)}
+              cy={yScale(d.maturity)}
+              r="3"
+              fill="#10b981"
+            />
+          </g>
+        ))}
+      </svg>
+      
+      {/* Legend */}
+      <div className="flex items-center justify-center gap-4 mt-4">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+          <span className="text-sm text-muted-foreground">Total Invested</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+          <span className="text-sm text-muted-foreground">Maturity Value</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface SimplePieChartProps {
+  data: Array<{ name: string; value: number; color: string }>;
+}
+
+const SimplePieChart: React.FC<SimplePieChartProps> = ({ data }) => {
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+  const size = 160;
+  const center = size / 2;
+  const radius = 60;
+
+  let cumulativePercentage = 0;
+
+  return (
+    <div className="flex flex-col items-center">
+      <svg width={size} height={size} className="mb-4">
+        {data.map((item, index) => {
+          const percentage = item.value / total;
+          const startAngle = cumulativePercentage * 360;
+          const endAngle = (cumulativePercentage + percentage) * 360;
+          
+          const x1 = center + radius * Math.cos((startAngle - 90) * Math.PI / 180);
+          const y1 = center + radius * Math.sin((startAngle - 90) * Math.PI / 180);
+          const x2 = center + radius * Math.cos((endAngle - 90) * Math.PI / 180);
+          const y2 = center + radius * Math.sin((endAngle - 90) * Math.PI / 180);
+          
+          const largeArcFlag = percentage > 0.5 ? 1 : 0;
+          
+          const pathData = [
+            `M ${center} ${center}`,
+            `L ${x1} ${y1}`,
+            `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+            'Z'
+          ].join(' ');
+          
+          cumulativePercentage += percentage;
+          
+          return (
+            <path
+              key={index}
+              d={pathData}
+              fill={item.color}
+              stroke="white"
+              strokeWidth="2"
+            />
+          );
+        })}
+      </svg>
+      
+      {/* Legend */}
+      <div className="space-y-2">
+        {data.map((item, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full" 
+              style={{ backgroundColor: item.color }}
+            ></div>
+            <span className="text-sm text-muted-foreground">
+              {item.name}: {((item.value / total) * 100).toFixed(0)}%
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 interface ResultsDisplayProps {
   results: CalculationResult | null;
@@ -115,8 +270,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, calculatorType
     { name: 'Principal', value: results.totalInvested, color: '#3b82f6' },
     { name: 'Interest', value: results.interestEarned, color: '#10b981' }
   ];
-
-  const COLORS = ['#3b82f6', '#10b981'];
 
   const getCalculatorTitle = () => {
     switch (calculatorType) {
@@ -242,53 +395,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, calculatorType
                     Track how your investment grows month by month
                   </p>
                 </div>
-                <div className="h-80 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={results.monthlyData}>
-                      <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                      <XAxis 
-                        dataKey="month" 
-                        tick={{ fill: 'hsl(var(--muted-foreground))' }}
-                        tickLine={{ stroke: 'hsl(var(--border))' }}
-                      />
-                      <YAxis 
-                        tick={{ fill: 'hsl(var(--muted-foreground))' }}
-                        tickLine={{ stroke: 'hsl(var(--border))' }}
-                        tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}K`}
-                      />
-                      <Tooltip 
-                        contentStyle={{
-                          backgroundColor: 'hsl(var(--background))',
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: '8px',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                        }}
-                        formatter={(value: any, name: string) => [
-                          `₹${Number(value).toLocaleString()}`, 
-                          name === 'invested' ? 'Total Invested' : 
-                          name === 'maturity' ? 'Maturity Value' : 'Interest Earned'
-                        ]}
-                        labelFormatter={(label) => `Month ${label}`}
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="invested" 
-                        stroke="#3b82f6" 
-                        strokeWidth={2}
-                        dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                        name="invested"
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="maturity" 
-                        stroke="#10b981" 
-                        strokeWidth={2}
-                        dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
-                        name="maturity"
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
+                <SimpleLineChart data={results.monthlyData} />
               </motion.div>
             )}
 
@@ -304,29 +411,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, calculatorType
                 <p className="text-sm text-muted-foreground mb-4">
                   Principal vs Interest composition
                 </p>
-                <div className="h-64 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={pieData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {pieData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        formatter={(value: any) => [`₹${Number(value).toLocaleString()}`, '']}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
+                <SimplePieChart data={pieData} />
               </div>
 
               {/* Summary Stats */}
