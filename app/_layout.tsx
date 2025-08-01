@@ -13,12 +13,14 @@ export default function RootLayout() {
           options={{ 
             title: 'Smart Investment Calculator',
             headerStyle: {
-              backgroundColor: '#3b82f6',
+              backgroundColor: '#667eea',
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
               fontWeight: 'bold',
+              fontSize: 18,
             },
+            headerShadowVisible: true,
           }} 
         />
       </Stack>
