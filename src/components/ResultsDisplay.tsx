@@ -7,7 +7,7 @@ import {
   Dimensions,
   Animated,
 } from 'react-native';
-import { TrendingUp, DollarSign, Percent, PieChart as PieChartIcon, BarChart3 } from 'lucide-react-native';
+import { TrendingUp, DollarSign, Percent, ChartPie as PieChartIcon, ChartBar as BarChart3 } from 'lucide-react-native';
 import { CalculationResult } from './Calculator';
 import { formatCurrency } from '../utils/formatters';
 import PieChart from './PieChart';
